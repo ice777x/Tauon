@@ -1,0 +1,7 @@
+FROM python:3.10
+
+WORKDIR /Tauon/
+
+RUN git clone -b https://github.com/ice777x/Tauon.git /Tauon/
+
+CMD ["python3","main.py"]

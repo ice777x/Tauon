@@ -1,0 +1,43 @@
+{
+    "name": "Tauon",
+    "description": "Tauon",
+    "logo": "https://i.pinimg.com/280x280_RS/96/74/ea/9674ea20f87fda4256d1a78afb99f821.jpg",
+    "keywords": [
+        "telegram",
+        "pyrogram",
+        "userbot",
+        "Tauon",
+        "plugin"
+    ],
+    "repository": "https://github.com/ice777x/Tauon",
+    "success_url": "https://t.me/ice777x",
+    "image": "heroku/python",
+    "formation": {
+        "worker": {
+            "quantity": 8,
+            "size": "free"
+        }
+    },
+    "env": {
+        "API_ID": {
+            "description": "Bu değeri my.telegram.org adresinden alın.",
+            "required": true
+        },
+        "API_HASH": {
+            "description": "Bu değeri my.telegram.org adresinden alın.",
+            "required": true
+        },
+        "SESSION_STRING": {
+            "description": "session string, özel bir değerdir.",
+            "required": true
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
+        },
+        {
+            "url": "heroku/python"
+        }
+    ]
+}
