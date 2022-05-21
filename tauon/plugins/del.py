@@ -61,6 +61,7 @@ async def del_msg(client: Client, message: Message):
 
 @on_msg(pattern="delme (.*)")
 async def delme(client: Client, message: Message):
+    await message.delete()
     try:
         mk = int(message.text.split()[1])
         my_us = message.from_user.username
