@@ -5,6 +5,7 @@ from pyrogram import Client
 from tauon.modules import tag
 import asyncio
 import os
+import re
 
 HELP["tools"] = {
     "plugins": [
@@ -16,7 +17,7 @@ HELP["tools"] = {
 
 @on_msg(pattern="(p|plugins?) ?(.*)")
 async def plugin(_, message: Message):
-    plugins = os.listdir("tauon/plugins")
+    plugins = sorted(os.listdir("tauon/plugins"))
     if len(message.text.split()) > 1:
         if "install" in message.text:
             if message.reply_to_message and message.reply_to_message.document:
@@ -72,7 +73,7 @@ async def plugin(_, message: Message):
 
 @on_msg(pattern="tagall ?")
 async def tagall(client: Client, message: Message):
-    t = tag.Tagger(client=client,offset=0,channel="@goygoy_muhabbet_sohbet")
+    t = tag.Tagger(client=client, offset=0, channel="@goygoy_muhabbet_sohbet")
     users = await t.tag_all()
     ids = [i.id for i in users]
     ###########################
@@ -92,24 +93,68 @@ async def tagall(client: Client, message: Message):
             for i in nw_users
         ]
     )
-    with open('tagged.txt',"w",encoding='utf-8') as file:
+    with open("tagged.txt", "w", encoding="utf-8") as file:
         file.write(a)
 
 
 @on_msg(pattern="sendpy (.*)")
-async def send_py(client: Client,message: Message):
-    plugins = [i for i in os.listdir('tauon/plugins') if i.endswith(".py")]
+async def send_py(client: Client, message: Message):
+    plugins = [i for i in os.listdir("tauon/plugins") if i.endswith(".py")]
     text = message.text.split()[1]
     if text.endswith(".py"):
         if text in plugins:
-            await client.send_document(message.chat.id,f"tauon/plugins/{text}")
+            await client.send_document(message.chat.id, f"tauon/plugins/{text}")
         else:
             await message.edit("`Yüklü Plugin bulunamadı!`")
             return
     else:
-        if message.text.split()[1]+".py" in plugins:
-            await client.send_document(message.chat.id,f"tauon/plugins/{message.text.split()[1]+'.py'}")
-        
+        if message.text.split()[1] + ".py" in plugins:
+            await client.send_document(
+                message.chat.id, f"tauon/plugins/{message.text.split()[1]+'.py'}"
+            )
+
         else:
             await message.edit("`Yüklü Plugin bulunamadı!`")
             return
+
+
+@on_msg(pattern="down (.*)")
+async def down(client: Client, message: Message):
+    pattern = re.compile(r"@[a-zA-Z0-9_]{3,32}")
+    if re.match(pattern, message.text) or "me" in message.text:
+        chat_id = re.match(pattern, message.text).group(0) if not message.text else "me"
+        print(chat_id)
+        await message.delete()
+        if message.reply_to_message:
+            if message.reply_to_message.video:
+                file_name = message.reply_to_message.video.file_id
+                await client.send_video(chat_id, file_name)
+
+            elif message.reply_to_message.photo:
+                file_name = message.reply_to_message.photo.file_id
+                await client.send_video(chat_id, file_name)
+
+            elif message.reply_to_message.sticker:
+                file_name = message.reply_to_message.sticker.file_id
+                await client.send_sticker(chat_id, file_name)
+
+            elif message.reply_to_message.animation:
+                file_name = message.reply_to_message.animation.file_id
+                await client.send_animation(chat_id, file_name)
+
+            elif message.reply_to_message.audio:
+                file_name = message.reply_to_message.audio.file_id
+                await client.send_audio(chat_id, file_name)
+
+            elif (
+                message.reply_to_message.document
+                and not message.reply_to_message.animation
+            ):
+                file_name = message.reply_to_message.document.file_id
+                await client.send_document(chat_id, file_name)
+
+            elif message.reply_to_message.voice:
+                file_name = message.reply_to_message.voice.file_id
+                await client.send_voice(chat_id, file_name)
+    else:
+        await message.edit("`Chat ID yanlış veya yok!`")

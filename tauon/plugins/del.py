@@ -17,12 +17,11 @@ HELP["del"] = {
 async def ido(client: Client, message: Message):
     if len(str(message)) > 4096:
         await message.delete()
-        await client.send_message(chat_id=message.chat.id, text=f"{str(message)[:4096]}")
-        await client.send_message(
-            chat_id=message.chat.id, text=f"{str(message)[4096:8192]}"
-        )
+        await client.send_message(chat_id="me", text=f"{str(message)[:4096]}")
+        await client.send_message(chat_id="me", text=f"{str(message)[4096:8192]}")
     else:
-        await message.edit_text(f"{message}")
+        await client.send_message(chat_id="me", text=f"{str(message)[:4096]}")
+        # await message.edit_text(f"{message}")
 
     message.continue_propagation()
 
