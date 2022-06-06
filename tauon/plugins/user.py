@@ -11,7 +11,7 @@ HELP["user"] = {
 }
 
 
-@on_msg(pattern="user")
+@on_msg(pattern="user ?(.*)")
 async def user_(client: Client, message: Message):
     await message.edit_text("`Getting info for us...`")
     if message.reply_to_message:
