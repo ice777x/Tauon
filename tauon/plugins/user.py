@@ -17,6 +17,9 @@ async def user_(client: Client, message: Message):
     if message.reply_to_message:
         from_user = await client.get_users(message.reply_to_message.from_user.id)
         from_chat = await client.get_chat(message.reply_to_message.from_user.id)
+    elif "@" in message.text:
+        from_user = await client.get_users(message.text.split()[1])
+        from_chat = await client.get_chat(message.text.split()[1])
     else:
         await message.edit_text("no valid user_id or message specified")
         return

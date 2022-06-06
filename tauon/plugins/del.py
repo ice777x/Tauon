@@ -15,14 +15,18 @@ HELP["del"] = {
 
 @on_msg(pattern="veri")
 async def ido(client: Client, message: Message):
+    await message.delete()
     if len(str(message)) > 4096:
-        await message.delete()
-        await client.send_message(chat_id="me", text=f"{str(message)[:4096]}")
-        await client.send_message(chat_id="me", text=f"{str(message)[4096:8192]}")
+        await client.send_message(
+            chat_id=message.chat.id, text=f"{str(message)[:4096]}"
+        )
+        await client.send_message(
+            chat_id=message.chat.id, text=f"{str(message)[4096:8192]}"
+        )
     else:
-        await client.send_message(chat_id="me", text=f"{str(message)[:4096]}")
-        # await message.edit_text(f"{message}")
-
+        await client.send_message(
+            chat_id=message.chat.id, text=f"{str(message)[:4096]}"
+        )
     message.continue_propagation()
 
 
@@ -66,7 +70,9 @@ async def delme(client: Client, message: Message):
         my_us = message.from_user.username
         i = 1
         messages = []
-        async for msg in client.search_messages(chat_id=message.chat.id, from_user=my_us):
+        async for msg in client.search_messages(
+            chat_id=message.chat.id, from_user=my_us
+        ):
             if i > mk + 1:
                 break
             messages.append(msg.id)
